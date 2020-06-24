@@ -99,6 +99,7 @@ public class Controller implements Initializable {
         stage.setTitle("Create a Map");
         stage.setScene(new Scene(p, 300, 275));
         stage.show();
+        mainController.createMapGrid();
 
     }
 
