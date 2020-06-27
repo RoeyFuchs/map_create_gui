@@ -3,18 +3,21 @@ package sample;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.DirectoryChooser;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static javafx.application.Platform.exit;
 
 public class MainWin {
     public GridPane mainGrid;
@@ -90,15 +93,32 @@ public class MainWin {
         }
 
 
-
-
         StringBuilder stringMap = new StringBuilder();
         String newLine = System.getProperty("line.separator");
         stringMap.append(this.rows + "," + this.columns).append(newLine);
         for (int i = 0; i < this.rows; i++) {
             stringMap.append(String.join(" ", list.get(i))).append(newLine);
         }
-        System.out.println(stringMap);
+
+
+        DirectoryChooser chooser = new DirectoryChooser();
+        File selectedDirectory = chooser.showDialog(this.mainGrid.getScene().getWindow());
+
+        if (selectedDirectory==null) return; //if the user didn't choose a directory
+
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS").format(new Date());
+        String fileName = timeStamp+".txt";
+
+        String fullPath = selectedDirectory.getAbsolutePath()+"/"+fileName;
+
+        try {
+            FileWriter myWriter = new FileWriter(fullPath);
+            myWriter.write(stringMap.toString());
+            myWriter.close();
+            AlertBox.display("File saved", "File saved");
+        } catch (IOException e) {
+            AlertBox.display("Error while saving map file");
+        }
 
     }
 
@@ -110,4 +130,7 @@ public class MainWin {
     }
 
 
+    public void exitgui(ActionEvent actionEvent) {
+        exit();
+    }
 }
